@@ -13,35 +13,50 @@
       </div>
 
       <form class="auth-form">
-        <div class="auth-form__inputs">
-          <div v-if="pageType === 'reg'" class="auth-form__first-name">
-            <input v-model="authForm.firstName" class="auth-form__input" placeholder="first name" />
-            <p class="auth-form__error"></p>
-          </div>
-
-          <div v-if="pageType === 'reg'" class="auth-form__last-name">
-            <input v-model="authForm.lastName" class="auth-form__input" placeholder="last name" />
-          </div>
-
-          <div class="auth-form__login">
-            <input v-model="authForm.login" class="auth-form__input" placeholder="login" />
-            <p class="auth-form__error"></p>
-          </div>
-
-          <div class="auth-form__password">
-            <input v-model="authForm.password" class="auth-form__input" placeholder="password" />
-            <p class="auth-form__error"></p>
-          </div>
-
-          <div v-if="pageType === 'reg'" class="auth-form__password-repeat">
-            <input
-              v-model="authForm.passwordRepeat"
-              class="auth-form__input"
-              placeholder="repeat password"
-            />
-            <p class="auth-form__error"></p>
-          </div>
-        </div>
+        <Input
+          v-if="pageType === 'reg'"
+          v-model:value="authForm.firstName"
+          placeholder="first name"
+          :error="errors.includes('firstName')"
+          error-message="Please add first name"
+          name="firstName"
+          @input-change="onInputChange"
+        />
+        <Input
+          v-if="pageType === 'reg'"
+          v-model:value="authForm.lastName"
+          placeholder="last name"
+          :error="errors.includes('lastName')"
+          name="lastName"
+          @input-change="onInputChange"
+        />
+        <Input
+          v-model:value="authForm.login"
+          placeholder="login"
+          input-type="text"
+          :error="errors.includes('login')"
+          error-message="Please add login"
+          name="login"
+          @input-change="onInputChange"
+        />
+        <Input
+          v-model:value="authForm.password"
+          placeholder="password"
+          input-type="password"
+          :error="errors.includes('password')"
+          error-message="Please add password"
+          name="password"
+          @input-change="onInputChange"
+        />
+        <Input
+          v-if="pageType === 'reg'"
+          v-model:value="authForm.passwordRepeat"
+          placeholder="repeat password"
+          :error="errors.includes('passwordRepeat')"
+          :error-message="repeatPasswordErrorMessage"
+          name="passwordRepeat"
+          @input-change="onInputChange"
+        />
       </form>
 
       <button v-if="pageType === 'reg'" class="auth-form__submit-button" @click.prevent="signUp">
@@ -52,12 +67,10 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref, reactive } from 'vue';
-
+<script lang="ts" setup>
+import Input from '@/components/Input/Input.vue';
+import { ref, reactive } from 'vue';
 import './auth.sass';
-
-type PageType = 'auth' | 'reg';
 
 interface AuthForm {
   login: string;
@@ -67,31 +80,72 @@ interface AuthForm {
   passwordRepeat: string;
 }
 
-export default defineComponent({
-  setup() {
-    const pageType = ref<PageType>('auth');
+type PageType = 'auth' | 'reg';
 
-    const authForm = reactive<AuthForm>({
-      login: '',
-      password: '',
-      lastName: '',
-      firstName: '',
-      passwordRepeat: ''
-    });
+const formTemplate = { login: '', password: '', lastName: '', firstName: '', passwordRepeat: '' };
 
-    const changePageType = () => {
-      if (pageType.value === 'auth') {
-        return (pageType.value = 'reg');
-      }
+const authForm = reactive<AuthForm>({ ...formTemplate });
+const errors = reactive<Array<string>>([]);
+const pageType = ref<PageType>('auth');
 
-      pageType.value = 'auth';
-    };
+const repeatPasswordErrorMessage = ref<string>('Please add password');
 
-    const logIn = () => {};
+const changePageType = () => {
+  Object.keys(authForm).forEach((key) => (authForm[key as keyof AuthForm] = ''));
 
-    const signUp = () => {};
-
-    return { pageType, authForm, changePageType, logIn, signUp };
+  if (pageType.value === 'auth') {
+    return (pageType.value = 'reg');
   }
-});
+
+  pageType.value = 'auth';
+};
+
+const onInputChange = (name: string) => {
+  const index = errors.findIndex((errorField) => errorField === name);
+
+  if (index === -1) {
+    return;
+  }
+
+  errors.splice(index, 1);
+};
+
+const logIn = () => {
+  Object.keys(authForm).forEach((key) => {
+    if (key !== 'login' && key !== 'password') {
+      return;
+    }
+
+    if (authForm[key as keyof AuthForm] === '') {
+      errors.push(key);
+    }
+  });
+
+  if (errors.length !== 0) {
+    return;
+  }
+
+  Object.keys(authForm).forEach((key) => (authForm[key as keyof AuthForm] = ''));
+  alert('sucess');
+};
+
+const signUp = () => {
+  Object.keys(authForm).forEach((key) => {
+    if (authForm[key as keyof AuthForm] === '') {
+      errors.push(key);
+    }
+  });
+
+  if (!errors.includes('passwordRepeat') && authForm.password !== authForm.passwordRepeat) {
+    repeatPasswordErrorMessage.value = "Passwords don't match";
+    errors.push('passwordRepeat');
+  }
+
+  if (errors.length !== 0) {
+    return;
+  }
+
+  Object.keys(authForm).forEach((key) => (authForm[key as keyof AuthForm] = ''));
+  alert('sucess');
+};
 </script>
