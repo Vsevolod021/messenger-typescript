@@ -68,7 +68,9 @@
 </template>
 
 <script lang="ts" setup>
+import authService from '@/services/auth.service';
 import Input from '@/components/Input/Input.vue';
+import { useRouter } from 'vue-router';
 import { ref, reactive } from 'vue';
 import './auth.sass';
 
@@ -83,6 +85,8 @@ interface AuthForm {
 type PageType = 'auth' | 'reg';
 
 const formTemplate = { login: '', password: '', lastName: '', firstName: '', passwordRepeat: '' };
+
+const router = useRouter();
 
 const authForm = reactive<AuthForm>({ ...formTemplate });
 const errors = reactive<Array<string>>([]);
@@ -110,7 +114,7 @@ const onInputChange = (name: string) => {
   errors.splice(index, 1);
 };
 
-const logIn = () => {
+const logIn = async () => {
   Object.keys(authForm).forEach((key) => {
     if (key !== 'login' && key !== 'password') {
       return;
@@ -125,8 +129,13 @@ const logIn = () => {
     return;
   }
 
-  Object.keys(authForm).forEach((key) => (authForm[key as keyof AuthForm] = ''));
-  alert('sucess');
+  const response = await authService
+    .login(authForm)
+    .then(() => {
+      Object.keys(authForm).forEach((key) => (authForm[key as keyof AuthForm] = ''));
+      router.push('/main');
+    })
+    .catch((err) => alert(err));
 };
 
 const signUp = () => {

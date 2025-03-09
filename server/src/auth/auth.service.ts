@@ -10,16 +10,16 @@ export class AuthService {
   ) {}
 
   async signIn(
-    username: string,
+    login: string,
     password: string,
   ): Promise<{ access_token: string }> {
-    const user = this.usersService.findOne(username);
+    const user = this.usersService.findOne(login);
 
     if (user?.password !== password) {
       throw new UnauthorizedException();
     }
 
-    const payload = { sub: user.userId, username: user.username };
+    const payload = { sub: user.userId, login: user.login };
 
     return { access_token: await this.jwtService.signAsync(payload) };
   }

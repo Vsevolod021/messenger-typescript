@@ -13,9 +13,6 @@ export class AuthController {
   async SignIn(
     @Body() signInDto: SignInDto,
   ): Promise<{ access_token: string }> {
-    return await this.authService.signIn(
-      signInDto.username,
-      signInDto.password,
-    );
+    return await this.authService.signIn(signInDto.login, signInDto.password);
   }
 }

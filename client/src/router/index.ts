@@ -4,7 +4,8 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/main',
     name: 'main',
-    component: () => import('@/Pages/Main/Main.vue')
+    component: () => import('@/Pages/Main/Main.vue'),
+    meta: { requiresAuth: true }
   },
   {
     path: '/auth',
@@ -20,6 +21,25 @@ const routes: Array<RouteRecordRaw> = [
 const router = createRouter({
   history: createWebHistory(),
   routes
+});
+
+router.beforeEach((to, _, next) => {
+  const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
+
+  const token = localStorage.getItem('token');
+
+  if (requiresAuth) {
+    if (!token) {
+      return next({ name: 'auth' });
+    }
+    return next();
+  }
+
+  if (token) {
+    return next({ name: 'main' });
+  }
+
+  next();
 });
 
 export default router;
