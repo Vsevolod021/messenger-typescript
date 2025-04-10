@@ -4,4 +4,10 @@ export interface UserDto {
   password: string;
 }
 
+export interface CreateUserDto {
+  login: string;
+  password: string;
+  name: string;
+}
+
 export type UsersDto = Array<UserDto>;
