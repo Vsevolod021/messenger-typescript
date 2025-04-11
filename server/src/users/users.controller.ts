@@ -17,11 +17,11 @@ export class UsersController {
   constructor(private usersService: UsersService) {}
 
   // @Public()
-  // @HttpCode(HttpStatus.OK)
-  // @Get()
-  // async findAll() {
-
-  // }
+  @HttpCode(HttpStatus.OK)
+  @Get()
+  async findAll() {
+    return await this.usersService.findAll();
+  }
 
   @Public()
   @HttpCode(HttpStatus.OK)

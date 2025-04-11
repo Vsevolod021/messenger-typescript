@@ -9,7 +9,7 @@ import { User, UserSchema } from 'src/schemas/user.schema';
   exports: [UsersService],
   controllers: [UsersController],
   imports: [
-    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]), // Убедитесь, что имя User.name совпадает
+    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
   ],
 })
 export class UsersModule {}
