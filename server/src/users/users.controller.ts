@@ -7,23 +7,20 @@ import {
   Get,
 } from '@nestjs/common';
 
-import { UsersService } from './users.service';
-import { Public } from 'src/auth/decorators/public.decorator';
-import { CreateUserDto } from './users.dto';
 import { User } from 'src/schemas/user.schema';
+import { UsersService } from './users.service';
+import { CreateUserDto } from './users.dto';
 
 @Controller('users')
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
-  // @Public()
   @HttpCode(HttpStatus.OK)
   @Get()
   async findAll() {
     return await this.usersService.findAll();
   }
 
-  @Public()
   @HttpCode(HttpStatus.OK)
   @Post()
   async create(@Body() createUserDto: CreateUserDto): Promise<User> {
