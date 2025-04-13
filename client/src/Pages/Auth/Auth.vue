@@ -15,47 +15,48 @@
       <form class="auth-form">
         <Input
           v-if="pageType === 'reg'"
-          v-model:value="authForm.firstName"
-          placeholder="first name"
-          :error="errors.includes('firstName')"
           error-message="Please add first name"
-          name="firstName"
+          :error="errors.includes('name')"
+          v-model:value="authForm.name"
           @input-change="onInputChange"
+          placeholder="first name"
+          name="name"
         />
         <Input
           v-if="pageType === 'reg'"
-          v-model:value="authForm.lastName"
-          placeholder="last name"
-          :error="errors.includes('lastName')"
-          name="lastName"
+          :error="errors.includes('surname')"
+          v-model:value="authForm.surname"
           @input-change="onInputChange"
+          placeholder="last name"
+          name="surname"
         />
         <Input
-          v-model:value="authForm.login"
-          placeholder="login"
-          input-type="text"
           :error="errors.includes('login')"
           error-message="Please add login"
-          name="login"
+          v-model:value="authForm.login"
           @input-change="onInputChange"
+          placeholder="login"
+          input-type="text"
+          name="login"
         />
         <Input
-          v-model:value="authForm.password"
-          placeholder="password"
-          input-type="password"
           :error="errors.includes('password')"
           error-message="Please add password"
-          name="password"
+          v-model:value="authForm.password"
           @input-change="onInputChange"
+          placeholder="password"
+          input-type="password"
+          name="password"
         />
         <Input
-          v-if="pageType === 'reg'"
-          v-model:value="authForm.passwordRepeat"
-          placeholder="repeat password"
-          :error="errors.includes('passwordRepeat')"
           :error-message="repeatPasswordErrorMessage"
-          name="passwordRepeat"
+          :error="errors.includes('passwordRepeat')"
+          v-model:value="authForm.passwordRepeat"
           @input-change="onInputChange"
+          placeholder="repeat password"
+          v-if="pageType === 'reg'"
+          input-type="password"
+          name="passwordRepeat"
         />
       </form>
 
@@ -77,14 +78,14 @@ import './auth.sass';
 interface AuthForm {
   login: string;
   password: string;
-  lastName: string;
-  firstName: string;
+  surname: string;
+  name: string;
   passwordRepeat: string;
 }
 
 type PageType = 'auth' | 'reg';
 
-const formTemplate = { login: '', password: '', lastName: '', firstName: '', passwordRepeat: '' };
+const formTemplate = { login: '', password: '', surname: '', name: '', passwordRepeat: '' };
 
 const router = useRouter();
 
@@ -129,8 +130,8 @@ const logIn = async () => {
     return;
   }
 
-  const response = await authService
-    .login(authForm)
+  authService
+    .logIn(authForm)
     .then(() => {
       Object.keys(authForm).forEach((key) => (authForm[key as keyof AuthForm] = ''));
       router.push('/main');
@@ -154,7 +155,12 @@ const signUp = () => {
     return;
   }
 
-  Object.keys(authForm).forEach((key) => (authForm[key as keyof AuthForm] = ''));
-  alert('sucess');
+  authService
+    .signUp(authForm)
+    .then(() => {
+      Object.keys(authForm).forEach((key) => (authForm[key as keyof AuthForm] = ''));
+      router.push('/main');
+    })
+    .catch((err) => alert(err));
 };
 </script>
