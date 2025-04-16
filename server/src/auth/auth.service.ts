@@ -7,7 +7,10 @@ import {
 
 import { UsersService } from '../users/users.service';
 import { CreateUserDto } from 'src/users/users.dto';
+import { jwtConstants } from './constants';
 import { JwtService } from '@nestjs/jwt';
+import { ProfileDto } from './auth.dto';
+import * as jwt from 'jsonwebtoken';
 
 @Injectable()
 export class AuthService {
@@ -56,5 +59,30 @@ export class AuthService {
     const payload = { sub: user._id, login: user.login };
 
     return { access_token: await this.jwtService.signAsync(payload) };
+  }
+
+  async getUserDataFromToken(token: string): Promise<ProfileDto> {
+    const decoded: string | jwt.JwtPayload = jwt.verify(
+      token,
+      jwtConstants.secret,
+    );
+
+    if (typeof decoded === 'string') {
+      throw new Error('Unexpected string payload');
+    }
+
+    const profileinfo = await this.usersService.findOne(decoded.login);
+
+    if (typeof profileinfo === 'undefined') {
+      throw new Error('User not found!');
+    }
+
+    return {
+      _id: profileinfo._id,
+      surname: profileinfo.surname,
+      login: profileinfo.login,
+      photo: profileinfo.photo,
+      name: profileinfo.name,
+    };
   }
 }
