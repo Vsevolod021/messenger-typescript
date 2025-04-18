@@ -1,4 +1,5 @@
 import { lazy } from 'react';
+import { middleware } from './middleware';
 
 const Main = lazy(() => import('@/Pages/Main'));
 
@@ -7,7 +8,8 @@ export default {
   children: [
     {
       index: true,
-      element: <Main />
+      element: <Main />,
+      loader: middleware
     }
   ]
 };
