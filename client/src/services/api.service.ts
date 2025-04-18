@@ -4,15 +4,25 @@ class Api {
   jsonHeaders = { 'Content-Type': 'application/json' };
 
   async fetchData(url: string, method: Method = 'GET', body: object = {}) {
-    const token = JSON.parse(localStorage.getItem('token') || '').access_token;
-    const headers = { ...this.jsonHeaders, Authorization: `Bearer ${token}` };
+    const localStorageData = JSON.parse(localStorage.getItem('token') || '{}');
+    const token = localStorageData?.access_token || '';
 
+    const headers = { ...this.jsonHeaders, Authorization: `Bearer ${token}` };
     const options = { method, headers, body: JSON.stringify(body) };
 
     const response = await fetch(url, options);
 
+    if (response.status === 401) {
+      const { router } = await import('@/router');
+
+      localStorage.removeItem('token');
+      router.navigate('/auth');
+    }
+
     if (!response.ok) {
-      throw new Error('Error');
+      const ErrorData = await response.json();
+
+      throw new Error(ErrorData.message);
     }
 
     return await response.json();
