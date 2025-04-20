@@ -1,0 +1,12 @@
+.input 
+  &__input 
+    outline: none 
+    border: 1px solid black
+    &[data-error="true"]
+      border: 1px solid red
+  &__error 
+    display: none 
+  
+  &__input[data-error="true"] + &__error 
+    display: block
+    color: red
