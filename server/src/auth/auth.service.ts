@@ -1,9 +1,4 @@
-import {
-  Injectable,
-  UnauthorizedException,
-  HttpException,
-  HttpStatus,
-} from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 
 import { UsersService } from '../users/users.service';
 import { CreateUserDto } from 'src/users/users.dto';
@@ -23,19 +18,21 @@ export class AuthService {
     login: string,
     password: string,
   ): Promise<{ access_token: string }> {
-    try {
-      const user = await this.usersService.findOne(login);
+    const user = await this.usersService.findOne(login);
 
-      if (user?.password !== password) {
-        throw new UnauthorizedException();
-      }
+    if (user?.password !== password) {
+      const responseBody = {
+        status: HttpStatus.UNAUTHORIZED,
+        error: 'Registration failed',
+        message: 'Неверный логин или пароль',
+      };
 
-      const payload = { sub: user._id, login: user.login };
-
-      return { access_token: await this.jwtService.signAsync(payload) };
-    } catch {
-      throw new UnauthorizedException();
+      throw new HttpException(responseBody, HttpStatus.UNAUTHORIZED);
     }
+
+    const payload = { sub: user._id, login: user.login };
+
+    return { access_token: await this.jwtService.signAsync(payload) };
   }
 
   async register(
@@ -48,7 +45,7 @@ export class AuthService {
       const responseBody = {
         status: HttpStatus.BAD_REQUEST,
         error: 'Registration failed',
-        message: 'this login already exists',
+        message: 'Логин занят',
       };
 
       throw new HttpException(responseBody, HttpStatus.BAD_REQUEST);
@@ -88,6 +85,7 @@ export class AuthService {
     } catch {
       throw new HttpException(
         {
+          status: HttpStatus.BAD_REQUEST,
           error: 'Verifying failed',
           message: 'token does not exist',
         },

@@ -1,10 +1,12 @@
 import { useNavigate, Link } from 'react-router-dom';
+import { setProfile } from '@/store/profileSlice';
 import authService from '@/services/auth.service';
+import { useAppDispatch } from '@/hooks/store';
 import { useState } from 'react';
 
 import Input from '@/components/Input/Input';
-import { useAppDispatch } from '@/hooks/store';
-import { setProfile } from '@/store/profileSlice';
+
+import './auth.sass';
 
 type Form = { login: string; password: string };
 
@@ -16,6 +18,7 @@ const Authorization = () => {
 
   const [form, setForm] = useState<Form>({ ...initialForm });
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
+  const [formError, setFormError] = useState<string>('');
 
   const invalidEmpty = (state: string): boolean => {
     if (!state) {
@@ -47,7 +50,7 @@ const Authorization = () => {
         dispatch(setProfile(profile));
         navigate('/main');
       })
-      .catch((e) => alert(e))
+      .catch(({ message }) => setFormError(message))
       .finally(() => setIsSubmitted(true));
   };
 
@@ -77,6 +80,7 @@ const Authorization = () => {
           type="password"
           name="password"
         />
+        <div className="auth-page__form-error">{formError}</div>
         <button type="submit">Submit form</button>
       </form>
     </div>

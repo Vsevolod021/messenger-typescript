@@ -1,10 +1,12 @@
 import { useNavigate, Link } from 'react-router-dom';
 import authService from '@/services/auth.service';
+import { setProfile } from '@/store/profileSlice';
+import { useAppDispatch } from '@/hooks/store';
 import { useState } from 'react';
 
 import Input from '@/components/Input/Input';
-import { useAppDispatch } from '@/hooks/store';
-import { setProfile } from '@/store/profileSlice';
+
+import './auth.sass';
 
 type Form = {
   login: string;
@@ -20,8 +22,9 @@ const Authorization = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const [form, setForm] = useState<Form>({ ...initialForm });
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
+  const [form, setForm] = useState<Form>({ ...initialForm });
+  const [formError, setFormError] = useState<string>('');
 
   const invalidEmpty = (state: string): boolean => {
     if (!state) {
@@ -58,7 +61,7 @@ const Authorization = () => {
         dispatch(setProfile(data));
         navigate('/main');
       })
-      .catch((e) => alert(e))
+      .catch(({ message }) => setFormError(message))
       .finally(() => setIsSubmitted(true));
   };
 
@@ -120,6 +123,7 @@ const Authorization = () => {
           type="password"
           name="passwordRepeat"
         />
+        <div className="auth-page__form-error">{formError}</div>
         <button type="submit">Submit form</button>
       </form>
     </div>
