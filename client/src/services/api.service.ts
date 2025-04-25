@@ -3,12 +3,12 @@ type Method = 'GET' | 'POST';
 class Api {
   jsonHeaders = { 'Content-Type': 'application/json' };
 
-  async fetchData(url: string, method: Method = 'GET', body: object = {}) {
+  async fetchData(url: string, method: Method = 'GET', body: object | undefined = undefined) {
     const localStorageData = JSON.parse(localStorage.getItem('token') || '{}');
     const token = localStorageData?.access_token || '';
 
     const headers = { ...this.jsonHeaders, Authorization: `Bearer ${token}` };
-    const options = { method, headers, body: JSON.stringify(body) };
+    const options = body ? { method, headers, body: JSON.stringify(body) } : { method, headers };
 
     const response = await fetch(url, options);
 

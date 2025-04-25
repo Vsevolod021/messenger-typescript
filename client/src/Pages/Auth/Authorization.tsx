@@ -3,12 +3,15 @@ import authService from '@/services/auth.service';
 import { useState } from 'react';
 
 import Input from '@/components/Input/Input';
+import { useAppDispatch } from '@/hooks/store';
+import { setProfile } from '@/store/profileSlice';
 
 type Form = { login: string; password: string };
 
 const initialForm: Form = { login: '', password: '' };
 
 const Authorization = () => {
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const [form, setForm] = useState<Form>({ ...initialForm });
@@ -27,7 +30,7 @@ const Authorization = () => {
     setForm({ ...form, [name]: value });
   };
 
-  const onSubmit = (event: React.ChangeEvent<HTMLFormElement>) => {
+  const onSubmit = async (event: React.ChangeEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     setIsSubmitted(true);
@@ -38,7 +41,12 @@ const Authorization = () => {
 
     authService
       .logIn(form)
-      .then(() => navigate('/main'))
+      .then(async () => {
+        const profile = await authService.getProfile();
+
+        dispatch(setProfile(profile));
+        navigate('/main');
+      })
       .catch((e) => alert(e))
       .finally(() => setIsSubmitted(true));
   };

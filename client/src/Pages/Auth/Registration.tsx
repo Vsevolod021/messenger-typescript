@@ -3,6 +3,8 @@ import authService from '@/services/auth.service';
 import { useState } from 'react';
 
 import Input from '@/components/Input/Input';
+import { useAppDispatch } from '@/hooks/store';
+import { setProfile } from '@/store/profileSlice';
 
 type Form = {
   login: string;
@@ -15,6 +17,7 @@ type Form = {
 const initialForm: Form = { login: '', password: '', passwordRepeat: '', name: '', surname: '' };
 
 const Authorization = () => {
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const [form, setForm] = useState<Form>({ ...initialForm });
@@ -51,7 +54,10 @@ const Authorization = () => {
 
     authService
       .signUp(form)
-      .then(() => navigate('/main'))
+      .then((data) => {
+        dispatch(setProfile(data));
+        navigate('/main');
+      })
       .catch((e) => alert(e))
       .finally(() => setIsSubmitted(true));
   };

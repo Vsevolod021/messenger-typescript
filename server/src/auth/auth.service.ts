@@ -62,27 +62,37 @@ export class AuthService {
   }
 
   async getUserDataFromToken(token: string): Promise<ProfileDto> {
-    const decoded: string | jwt.JwtPayload = jwt.verify(
-      token,
-      jwtConstants.secret,
-    );
+    try {
+      const decoded: string | jwt.JwtPayload = jwt.verify(
+        token,
+        jwtConstants.secret,
+      );
 
-    if (typeof decoded === 'string') {
-      throw new Error('Unexpected string payload');
+      if (typeof decoded === 'string') {
+        throw new Error('Unexpected string payload');
+      }
+
+      const profileinfo = await this.usersService.findOne(decoded.login);
+
+      if (typeof profileinfo === 'undefined') {
+        throw new Error('User not found!');
+      }
+
+      return {
+        _id: profileinfo._id,
+        surname: profileinfo.surname,
+        login: profileinfo.login,
+        photo: profileinfo.photo,
+        name: profileinfo.name,
+      };
+    } catch {
+      throw new HttpException(
+        {
+          error: 'Verifying failed',
+          message: 'token does not exist',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
     }
-
-    const profileinfo = await this.usersService.findOne(decoded.login);
-
-    if (typeof profileinfo === 'undefined') {
-      throw new Error('User not found!');
-    }
-
-    return {
-      _id: profileinfo._id,
-      surname: profileinfo.surname,
-      login: profileinfo.login,
-      photo: profileinfo.photo,
-      name: profileinfo.name,
-    };
   }
 }
