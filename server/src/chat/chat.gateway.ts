@@ -34,6 +34,6 @@ export class ChatGateway
 
   @SubscribeMessage('message')
   handleMessage(@MessageBody() message: string): void {
-    this.server.emit('message', { message });
+    this.server.emit('message', message);
   }
 }
