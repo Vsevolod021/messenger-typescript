@@ -18,7 +18,7 @@ export class AuthService {
     login: string,
     password: string,
   ): Promise<{ access_token: string }> {
-    const user = await this.usersService.findOne(login);
+    const user = await this.usersService.findOneByLogin(login);
 
     if (user?.password !== password) {
       const responseBody = {
@@ -39,7 +39,7 @@ export class AuthService {
     createUserDto: CreateUserDto,
   ): Promise<{ access_token: string }> {
     const login = createUserDto.login;
-    const payloadLoginUser = await this.usersService.findOne(login);
+    const payloadLoginUser = await this.usersService.findOneByLogin(login);
 
     if (payloadLoginUser) {
       const responseBody = {
@@ -69,7 +69,7 @@ export class AuthService {
         throw new Error('Unexpected string payload');
       }
 
-      const profileinfo = await this.usersService.findOne(decoded.login);
+      const profileinfo = await this.usersService.findOneByLogin(decoded.login);
 
       if (typeof profileinfo === 'undefined') {
         throw new Error('User not found!');

@@ -7,17 +7,14 @@ export type MessageDocument = Message & Document;
 export class Message {
   _id: Types.ObjectId;
 
-  @Prop({ required: true })
-  name: string;
-
   @Prop({ default: '' })
-  photo: string;
+  date: Date;
 
   @Prop({ required: true })
-  data: string;
+  text: string;
 
   @Prop({ required: true, type: Types.ObjectId })
-  contacts: Types.ObjectId;
+  userId: Types.ObjectId;
 }
 
 export const MessageSchema = SchemaFactory.createForClass(Message);

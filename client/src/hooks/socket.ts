@@ -1,10 +1,10 @@
 import { io } from 'socket.io-client';
 import { socketUrl } from '@/config';
 
-export const useSocket = <T>() => {
+export const useSocket = <Emit, On>() => {
   const socket = io(socketUrl);
 
-  const on = (event: string, callback: (data: T) => void) => {
+  const on = (event: string, callback: (data: On) => void) => {
     socket.on(event, callback);
   };
 
@@ -12,7 +12,7 @@ export const useSocket = <T>() => {
     socket.off(event);
   };
 
-  const emit = (event: string, data: T) => {
+  const emit = (event: string, data: Emit) => {
     socket.emit(event, data);
   };
 

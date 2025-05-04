@@ -15,19 +15,24 @@ export interface IMessage {
   surname: string;
 }
 
+export interface Payload {
+  text: string;
+  userId: string;
+}
+
 const Page = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const profile = useAppSelector((state) => state.profile.profile);
 
-  const { emit, on, off } = useSocket<IMessage>();
+  const { emit, on, off } = useSocket<Payload, IMessage[]>();
 
   const [text, setText] = useState<string>('');
   const [chat, setChat] = useState<IMessage[]>([]);
 
   useEffect(() => {
-    on('message', (data) => setChat((prev) => [...prev, data]));
+    on('message', (data) => setChat(data));
 
     return () => off('message');
   }, []);
@@ -37,9 +42,7 @@ const Page = () => {
   };
 
   const onSend = () => {
-    const date = new Date();
-
-    emit('message', { ...profile, date, text });
+    emit('message', { userId: profile._id, text });
     setText('');
   };
 
