@@ -10,7 +10,6 @@ import {
 
 import { MessageService } from 'src/message/message.service';
 import { CreateMessageDto } from 'src/message/message.dto';
-import { UsersService } from 'src/users/users.service';
 import { Server, Socket } from 'socket.io';
 import { Logger } from '@nestjs/common';
 
@@ -23,17 +22,24 @@ export class ChatGateway
 
   private logger: Logger = new Logger('ChatGateway');
 
-  constructor(
-    private messageService: MessageService,
-    private usersService: UsersService,
-  ) {}
+  constructor(private messageService: MessageService) {}
 
   afterInit() {
     this.logger.log('Initialized!');
   }
 
-  handleConnection(client: Socket) {
+  async handleConnection(client: Socket) {
     this.logger.log(`Client connected: ${client.id}`);
+
+    const messagesList = await this.messageService.findAll();
+
+    const emittedMessagePromises = messagesList.map(async (message) => {
+      return await this.messageService.createEmittedMessage(message);
+    });
+
+    const emittedMessage = await Promise.all(emittedMessagePromises);
+
+    this.server.emit('message', emittedMessage);
   }
 
   handleDisconnect(client: Socket) {
@@ -42,27 +48,11 @@ export class ChatGateway
 
   @SubscribeMessage('message')
   async handleMessage(@MessageBody() message: CreateMessageDto) {
-    await this.messageService.create(message);
+    const savedMessage = await this.messageService.create(message);
 
-    const messagesList = await this.messageService.findAll();
+    const emittedMessage =
+      await this.messageService.createEmittedMessage(savedMessage);
 
-    const emittedMessagePromises = messagesList.map(async (message) => {
-      const userId = message.userId;
-
-      const user = await this.usersService.findOneById(userId);
-
-      if (!user) {
-        throw new Error('Пользователь не найде');
-      }
-
-      const { login, photo, surname, name } = user;
-      const { _id, date, text } = message;
-
-      return { _id, name, date, text, login, photo, surname };
-    });
-
-    const emittedMessage = await Promise.all(emittedMessagePromises);
-
-    this.server.emit('message', emittedMessage);
+    this.server.emit('message', [emittedMessage]);
   }
 }

@@ -1,9 +1,9 @@
 import { useAppDispatch, useAppSelector } from '@/hooks/store';
+import socketService from '@/services/socket.service';
 import { clearProfile } from '@/store/profileSlice';
 import authService from '@/services/auth.service';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { useSocket } from '@/hooks/socket';
 
 export interface IMessage {
   _id: string;
@@ -26,15 +26,19 @@ const Page = () => {
 
   const profile = useAppSelector((state) => state.profile.profile);
 
-  const { emit, on, off } = useSocket<Payload, IMessage[]>();
-
   const [text, setText] = useState<string>('');
   const [chat, setChat] = useState<IMessage[]>([]);
 
   useEffect(() => {
-    on('message', (data) => setChat(data));
+    socketService.connect();
 
-    return () => off('message');
+    socketService.on<IMessage[]>('message', (data) => setChat((prev) => [...prev, ...data]));
+
+    return () => {
+      socketService.off('message');
+
+      socketService.disconnect();
+    };
   }, []);
 
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -42,7 +46,7 @@ const Page = () => {
   };
 
   const onSend = () => {
-    emit('message', { userId: profile._id, text });
+    socketService.emit<Payload>('message', { userId: profile._id, text });
     setText('');
   };
 
