@@ -20,7 +20,7 @@ export class MessageService {
   }
 
   async createEmittedMessage(message: Message): Promise<EmitMessageDto> {
-    const userId = message.author;
+    const userId = String(message.author);
 
     if (!isValidObjectId(userId)) {
       throw new Error('Невалидный userId');

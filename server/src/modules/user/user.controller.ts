@@ -1,59 +1,50 @@
 import {
-  HttpException,
   HttpStatus,
   Controller,
   HttpCode,
+  Delete,
   Param,
-  Body,
-  Post,
+  Patch,
   Get,
+  Body,
 } from '@nestjs/common';
 
-import { Public } from 'src/modules/auth/decorators/public.decorator';
 import { User } from 'src/modules/user/user.schema';
+import { ApiOperation } from '@nestjs/swagger';
 import { UserService } from './user.service';
-import { CreateUserDto } from './user.dto';
-import { isValidObjectId } from 'mongoose';
-import { Types } from 'mongoose';
-
+import { UpdateUserDto } from './user.dto';
 @Controller('users')
 export class UserController {
   constructor(private userService: UserService) {}
 
   @HttpCode(HttpStatus.OK)
   @Get()
+  @ApiOperation({ summary: 'Список пользователей' })
   async findAll() {
     return await this.userService.findAll();
   }
 
   @HttpCode(HttpStatus.OK)
-  @Post()
-  async create(@Body() createUserDto: CreateUserDto): Promise<User> {
-    return await this.userService.create(createUserDto);
+  @Get(':id')
+  @ApiOperation({ summary: 'Получить пользователя по ID' })
+  async findById(@Param('id') id: string): Promise<User> {
+    return await this.userService.findOneById(id);
   }
 
-  @Public()
   @HttpCode(HttpStatus.OK)
-  @Get(':id')
-  async findById(@Param('id') id: string): Promise<User> {
-    const responseBody = {
-      status: HttpStatus.UNAUTHORIZED,
-      error: 'Failed',
-      message: 'Не найден',
-    };
+  @Patch(':id')
+  @ApiOperation({ summary: 'Обновить пользователя' })
+  async updateById(
+    @Param('id') id: string,
+    @Body() updateUserDto: UpdateUserDto,
+  ): Promise<User> {
+    return await this.userService.updateById(id, updateUserDto);
+  }
 
-    if (!isValidObjectId(id)) {
-      throw new HttpException(responseBody, HttpStatus.BAD_REQUEST);
-    }
-
-    const _id = new Types.ObjectId(id);
-
-    const user = await this.userService.findOneById(_id);
-
-    if (!user) {
-      throw new HttpException(responseBody, HttpStatus.BAD_REQUEST);
-    }
-
-    return user;
+  @HttpCode(HttpStatus.OK)
+  @Delete(':id')
+  @ApiOperation({ summary: 'Удалить пользователя' })
+  async removeById(@Param('id') id: string): Promise<void> {
+    await this.userService.deleteById(id);
   }
 }
