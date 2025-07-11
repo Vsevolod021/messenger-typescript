@@ -1,6 +1,6 @@
-import { Message, MessageDocument } from 'src/schemas/message.schema';
+import { Message, MessageDocument } from 'src/modules/message/message.schema';
 import { CreateMessageDto, EmitMessageDto } from './message.dto';
-import { UsersService } from 'src/users/users.service';
+import { UserService } from 'src/modules/user/user.service';
 import { isValidObjectId, Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Injectable } from '@nestjs/common';
@@ -8,7 +8,7 @@ import { Injectable } from '@nestjs/common';
 @Injectable()
 export class MessageService {
   constructor(
-    private usersService: UsersService,
+    private userService: UserService,
     @InjectModel(Message.name) private messageModel: Model<MessageDocument>,
   ) {}
 
@@ -26,7 +26,7 @@ export class MessageService {
       throw new Error('Невалидный userId');
     }
 
-    const user = await this.usersService.findOneById(userId);
+    const user = await this.userService.findOneById(userId);
 
     if (!user) {
       throw new Error('Пользователь не найден');

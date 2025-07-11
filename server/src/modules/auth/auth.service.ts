@@ -1,8 +1,7 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
-
-import { UsersService } from '../users/users.service';
-import { CreateUserDto } from 'src/users/users.dto';
-import { jwtConstants } from './constants';
+import { CreateUserDto } from 'src/modules/user/user.dto';
+import { jwtConstants } from './constants/jwt.constants';
+import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { ProfileDto } from './auth.dto';
 import * as jwt from 'jsonwebtoken';
@@ -10,7 +9,7 @@ import * as jwt from 'jsonwebtoken';
 @Injectable()
 export class AuthService {
   constructor(
-    private usersService: UsersService,
+    private usersService: UserService,
     private jwtService: JwtService,
   ) {}
 

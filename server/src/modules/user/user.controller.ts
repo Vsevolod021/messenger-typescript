@@ -9,28 +9,27 @@ import {
   Get,
 } from '@nestjs/common';
 
-import { Public } from 'src/auth/decorators/public.decorator';
-import { User } from 'src/schemas/user.schema';
-import { UsersService } from './users.service';
-import { CreateUserDto } from './users.dto';
+import { Public } from 'src/modules/auth/decorators/public.decorator';
+import { User } from 'src/modules/user/user.schema';
+import { UserService } from './user.service';
+import { CreateUserDto } from './user.dto';
 import { isValidObjectId } from 'mongoose';
 import { Types } from 'mongoose';
 
 @Controller('users')
-export class UsersController {
-  constructor(private usersService: UsersService) {}
+export class UserController {
+  constructor(private userService: UserService) {}
 
-  @Public()
   @HttpCode(HttpStatus.OK)
   @Get()
   async findAll() {
-    return await this.usersService.findAll();
+    return await this.userService.findAll();
   }
 
   @HttpCode(HttpStatus.OK)
   @Post()
   async create(@Body() createUserDto: CreateUserDto): Promise<User> {
-    return await this.usersService.create(createUserDto);
+    return await this.userService.create(createUserDto);
   }
 
   @Public()
@@ -49,7 +48,7 @@ export class UsersController {
 
     const _id = new Types.ObjectId(id);
 
-    const user = await this.usersService.findOneById(_id);
+    const user = await this.userService.findOneById(_id);
 
     if (!user) {
       throw new HttpException(responseBody, HttpStatus.BAD_REQUEST);

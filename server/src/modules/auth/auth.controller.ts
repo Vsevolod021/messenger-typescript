@@ -8,8 +8,8 @@ import {
   Get,
 } from '@nestjs/common';
 
+import { CreateUserDto } from 'src/modules/user/user.dto';
 import { Public } from './decorators/public.decorator';
-import { CreateUserDto } from 'src/users/users.dto';
 import { ProfileDto, SignInDto } from './auth.dto';
 import { AuthService } from './auth.service';
 

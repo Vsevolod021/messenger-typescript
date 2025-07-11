@@ -1,12 +1,12 @@
-import { Message, MessageSchema } from 'src/schemas/message.schema';
-import { UsersModule } from 'src/users/users.module';
+import { Message, MessageSchema } from 'src/modules/message/message.schema';
+import { UserModule } from 'src/modules/user/user.module';
 import { MessageService } from './message.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Module } from '@nestjs/common';
 
 @Module({
   imports: [
-    UsersModule,
+    UserModule,
     MongooseModule.forFeature([{ name: Message.name, schema: MessageSchema }]),
   ],
   providers: [MessageService],

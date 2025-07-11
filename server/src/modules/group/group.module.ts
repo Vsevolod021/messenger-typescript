@@ -1,6 +1,5 @@
-import { Group, GroupSchema } from 'src/schemas/group.schema';
+import { Group, GroupSchema } from 'src/modules/group/group.schema';
 import { MongooseModule } from '@nestjs/mongoose';
-
 import { Module } from '@nestjs/common';
 
 @Module({

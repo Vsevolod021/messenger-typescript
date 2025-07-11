@@ -1,5 +1,5 @@
-import { Chat, ChatSchema } from 'src/schemas/chat.schema';
-import { MessageModule } from 'src/message/message.module';
+import { MessageModule } from 'src/modules/message/message.module';
+import { Chat, ChatSchema } from 'src/modules/chat/chat.schema';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ChatGateway } from './chat.gateway';
 import { Module } from '@nestjs/common';

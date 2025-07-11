@@ -4,8 +4,9 @@ import {
   CanActivate,
   Injectable,
 } from '@nestjs/common';
-import { IS_PUBLIC_KEY } from './decorators/public.decorator';
-import { jwtConstants } from './constants';
+
+import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
+import { jwtConstants } from '../constants/jwt.constants';
 import { JwtService } from '@nestjs/jwt';
 import { Reflector } from '@nestjs/core';
 import { Request } from 'express';

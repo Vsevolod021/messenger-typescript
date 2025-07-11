@@ -8,8 +8,8 @@ import {
   MessageBody,
 } from '@nestjs/websockets';
 
-import { MessageService } from 'src/message/message.service';
-import { CreateMessageDto } from 'src/message/message.dto';
+import { MessageService } from 'src/modules/message/message.service';
+import { CreateMessageDto } from 'src/modules/message/message.dto';
 import { Server, Socket } from 'socket.io';
 import { Logger } from '@nestjs/common';
 
