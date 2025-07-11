@@ -7,7 +7,7 @@ export interface SignInDto {
 
 export interface ProfileDto {
   _id: Types.ObjectId;
-  surname: string;
+  secondName: string;
   login: string;
   photo: string;
   name: string;

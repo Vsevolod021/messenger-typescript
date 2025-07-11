@@ -3,9 +3,11 @@ import { Document, Types } from 'mongoose';
 
 export type UserDocument = User & Document;
 
-@Schema()
+@Schema({ timestamps: true })
 export class User {
   _id: Types.ObjectId;
+  createdAt?: Date;
+  updatedAt?: Date;
 
   @Prop({ required: true })
   login: string;
@@ -20,19 +22,13 @@ export class User {
   name: string;
 
   @Prop({ default: '' })
-  surname: string;
+  secondName: string;
 
   @Prop({ default: '' })
   description: string;
 
-  @Prop({ required: true, type: [{ type: Types.ObjectId, ref: 'Contact' }] })
-  contacts: Types.ObjectId;
-
-  @Prop({ required: true, type: [{ type: Types.ObjectId, ref: 'Chat' }] })
-  chats: Types.ObjectId;
-
-  @Prop({ required: true, type: [{ type: Types.ObjectId, ref: 'Group' }] })
-  groups: Types.ObjectId;
+  @Prop({ type: [{ type: Types.ObjectId, ref: 'User' }], default: [] })
+  contacts: Types.ObjectId[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

@@ -7,10 +7,10 @@ export interface CreateMessageDto {
 
 export interface EmitMessageDto {
   _id: Types.ObjectId;
-  date: Date;
+  secondName: string;
+  createdAt?: Date;
   text: string;
   name: string;
   login: string;
   photo: string;
-  surname: string;
 }

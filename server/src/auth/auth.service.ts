@@ -77,7 +77,7 @@ export class AuthService {
 
       return {
         _id: profileinfo._id,
-        surname: profileinfo.surname,
+        secondName: profileinfo.secondName,
         login: profileinfo.login,
         photo: profileinfo.photo,
         name: profileinfo.name,

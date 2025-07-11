@@ -3,18 +3,23 @@ import { Document, Types } from 'mongoose';
 
 export type MessageDocument = Message & Document;
 
-@Schema()
+@Schema({ timestamps: true })
 export class Message {
   _id: Types.ObjectId;
-
-  @Prop({ default: '' })
-  date: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
 
   @Prop({ required: true })
   text: string;
 
-  @Prop({ required: true, type: Types.ObjectId })
-  userId: Types.ObjectId;
+  @Prop({ required: true, type: Types.ObjectId, ref: 'User' })
+  author: Types.ObjectId;
+
+  @Prop({ type: Types.ObjectId, ref: 'Chat' })
+  chatId?: Types.ObjectId;
+
+  @Prop({ type: Types.ObjectId, ref: 'Group' })
+  groupId?: Types.ObjectId;
 }
 
 export const MessageSchema = SchemaFactory.createForClass(Message);

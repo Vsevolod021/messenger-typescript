@@ -20,7 +20,7 @@ export class MessageService {
   }
 
   async createEmittedMessage(message: Message): Promise<EmitMessageDto> {
-    const userId = message.userId;
+    const userId = message.author;
 
     if (!isValidObjectId(userId)) {
       throw new Error('Невалидный userId');
@@ -32,10 +32,10 @@ export class MessageService {
       throw new Error('Пользователь не найден');
     }
 
-    const { login, photo, surname, name } = user;
-    const { _id, date, text } = message;
+    const { login, photo, secondName, name } = user;
+    const { _id, text, createdAt } = message;
 
-    return { _id, name, date, text, login, photo, surname };
+    return { _id, name, text, login, photo, secondName, createdAt };
   }
 
   async findAll() {
