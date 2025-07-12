@@ -1,4 +1,5 @@
 import { MessageModule } from './modules/message/message.module';
+import { DialogModule } from './modules/dialog/dialog.module';
 import { GroupModule } from './modules/group/group.module';
 import { UserModule } from './modules/user/user.module';
 import { ChatModule } from './modules/chat/chat.module';
@@ -12,6 +13,7 @@ import { Module } from '@nestjs/common';
     AuthModule,
     UserModule,
     GroupModule,
+    DialogModule,
     MessageModule,
     MongooseModule.forRoot('mongodb://localhost/messenger'),
   ],

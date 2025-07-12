@@ -1,13 +1,10 @@
-import {
-  userNotFoundException,
-  invalidIdException,
-} from './constants/notFound.constants';
-
+import { InvalidIdException } from 'src/shared/constants/notFound.constants';
+import { userNotFoundException } from './constants/notFound.constants';
 import { User, UserDocument } from 'src/modules/user/user.schema';
-import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto, UpdateUserDto } from './user.dto';
 import { isValidObjectId, Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class UserService {
@@ -37,10 +34,10 @@ export class UserService {
 
   async findOneById(_id: string): Promise<User> {
     if (!isValidObjectId(_id)) {
-      throw invalidIdException;
+      throw InvalidIdException;
     }
 
-    const user = await this.findOne('_id', _id);
+    const user = await this.userModel.findById(_id).exec();
 
     if (!user) {
       throw userNotFoundException;
@@ -51,7 +48,7 @@ export class UserService {
 
   async updateById(_id: string, updateUserDto: UpdateUserDto): Promise<User> {
     if (!isValidObjectId(_id)) {
-      throw invalidIdException;
+      throw InvalidIdException;
     }
 
     const updatedUser = await this.userModel.findByIdAndUpdate(
@@ -61,7 +58,7 @@ export class UserService {
     );
 
     if (!updatedUser) {
-      throw new NotFoundException('Пользователь не найден');
+      throw userNotFoundException;
     }
 
     return updatedUser;
@@ -69,7 +66,7 @@ export class UserService {
 
   async deleteById(_id: string): Promise<void> {
     if (!isValidObjectId(_id)) {
-      throw invalidIdException;
+      throw InvalidIdException;
     }
 
     const updatedUser = await this.userModel.findByIdAndDelete(_id);

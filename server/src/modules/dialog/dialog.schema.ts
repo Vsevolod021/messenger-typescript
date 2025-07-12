@@ -1,10 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 
-export type ChatDocument = Chat & Document;
+export type DialogDocument = Dialog & Document;
 
 @Schema({ timestamps: true })
-export class Chat {
+export class Dialog {
   _id: Types.ObjectId;
   createdAt?: Date;
   updatedAt?: Date;
@@ -16,4 +16,4 @@ export class Chat {
   messages: Types.ObjectId[];
 }
 
-export const ChatSchema = SchemaFactory.createForClass(Chat);
+export const DialogSchema = SchemaFactory.createForClass(Dialog);

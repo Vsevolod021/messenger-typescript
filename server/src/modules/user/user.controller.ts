@@ -13,6 +13,7 @@ import { User } from 'src/modules/user/user.schema';
 import { ApiOperation } from '@nestjs/swagger';
 import { UserService } from './user.service';
 import { UpdateUserDto } from './user.dto';
+
 @Controller('users')
 export class UserController {
   constructor(private userService: UserService) {}
