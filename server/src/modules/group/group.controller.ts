@@ -67,14 +67,14 @@ export class GroupController {
 
   @HttpCode(HttpStatus.OK)
   @Patch(':id/addUsers')
-  @ApiOperation({ summary: 'Редактировать группу' })
+  @ApiOperation({ summary: 'Добавить пользователя в группу' })
   addUsers(@Param('id') id: string, @Body() user: UpdateUsersListDto) {
     return this.groupService.addUser(id, user.user);
   }
 
   @HttpCode(HttpStatus.OK)
   @Patch(':id/removeUsers')
-  @ApiOperation({ summary: 'Редактировать группу' })
+  @ApiOperation({ summary: 'Удалить пользователя из группы' })
   removeUsers(@Param('id') id: string, @Body() user: UpdateUsersListDto) {
     return this.groupService.removeUser(id, user.user);
   }
