@@ -15,6 +15,9 @@ export class Message {
   @Prop({ required: true, type: Types.ObjectId, ref: 'User' })
   author: Types.ObjectId;
 
+  @Prop({ default: false })
+  read: boolean;
+
   @Prop({ type: Types.ObjectId, ref: 'Chat' })
   chatId?: Types.ObjectId;
 

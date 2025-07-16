@@ -23,7 +23,9 @@ export class DialogService {
     return await this.dialogModel.find().exec();
   }
 
-  async createDialog({ users }: CreateDialogDto): Promise<Dialog> {
+  async createDialog(createDialogDto: CreateDialogDto): Promise<Dialog> {
+    const { users } = createDialogDto;
+
     if (users.length !== 2) {
       throw UsersLengthException;
     }
@@ -43,7 +45,7 @@ export class DialogService {
       throw DialogAlreadyExistsException;
     }
 
-    const newDialog = new this.dialogModel({ users });
+    const newDialog = new this.dialogModel(createDialogDto);
     return await newDialog.save();
   }
 
@@ -71,12 +73,12 @@ export class DialogService {
     return await this.dialogModel.find({ users: userId }).exec();
   }
 
-  async deleteDialog(id: string): Promise<void> {
-    if (!isValidObjectId(id)) {
+  async deleteDialog(_id: string): Promise<void> {
+    if (!isValidObjectId(_id)) {
       throw InvalidIdException;
     }
 
-    const result = await this.dialogModel.findByIdAndDelete(id);
+    const result = await this.dialogModel.findByIdAndDelete(_id);
 
     if (!result) {
       throw DialogNotFoundException;

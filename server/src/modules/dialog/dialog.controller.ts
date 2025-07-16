@@ -39,7 +39,7 @@ export class DialogController {
   }
 
   @HttpCode(HttpStatus.OK)
-  @Get('users/:userId')
+  @Get('user/:userId')
   @ApiOperation({ summary: 'Получить все диалоги пользователя' })
   getDialogsByUser(@Param('userId') userId: string) {
     return this.dialogService.getDialogsByUserId(userId);
