@@ -20,9 +20,6 @@ export class Group {
 
   @Prop({ required: true, type: [{ type: Types.ObjectId, ref: 'User' }] })
   users: Types.ObjectId[];
-
-  @Prop({ type: [{ type: Types.ObjectId, ref: 'Message' }], default: [] })
-  messages: Types.ObjectId[];
 }
 
 export const GroupSchema = SchemaFactory.createForClass(Group);

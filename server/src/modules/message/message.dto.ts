@@ -1,16 +1,10 @@
-import { Types } from 'mongoose';
-
 export interface CreateMessageDto {
   text: string;
-  userId: Types.ObjectId;
+  dialogId?: string;
+  groupId?: string;
+  author: string;
 }
 
-export interface EmitMessageDto {
-  _id: Types.ObjectId;
-  secondName: string;
-  createdAt?: Date;
+export interface UpdateMessageDto {
   text: string;
-  name: string;
-  login: string;
-  photo: string;
 }

@@ -18,5 +18,6 @@ import { Module } from '@nestjs/common';
   ],
   controllers: [AuthController],
   providers: [{ provide: APP_GUARD, useClass: AuthGuard }, AuthService],
+  exports: [AuthService],
 })
 export class AuthModule {}
