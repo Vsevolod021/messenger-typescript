@@ -72,15 +72,31 @@ export class MessageController {
   @ApiOperation({ summary: 'Редактировать сообщение' })
   async updateMessage(
     @Param('id') id: string,
-    @Body() updateMessageDto: UpdateMessageDto,
+    @Body() body: Omit<UpdateMessageDto, 'author'>,
+    @Headers('authorization') authorization: string,
   ) {
+    const token = authorization.replace('Bearer ', '');
+
+    const { _id } = await this.authService.getUserDataFromToken(token);
+
+    const updateMessageDto = { ...body, author: String(_id) };
+
     return this.messageService.updateMessage(id, updateMessageDto);
   }
 
   @HttpCode(HttpStatus.OK)
   @Delete(':id')
   @ApiOperation({ summary: 'Удалить сообщение' })
-  async deleteMessage(@Param('id') id: string) {
-    return this.messageService.deleteMessage(id);
+  async deleteMessage(
+    @Param('id') id: string,
+    @Headers('authorization') authorization: string,
+  ) {
+    const token = authorization.replace('Bearer ', '');
+
+    const userData = await this.authService.getUserDataFromToken(token);
+
+    const deleteMessageDto = { id: id, author: String(userData._id) };
+
+    return this.messageService.deleteMessage(deleteMessageDto);
   }
 }

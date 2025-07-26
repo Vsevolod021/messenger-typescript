@@ -2,8 +2,6 @@ import { BadRequestException, NotFoundException } from '@nestjs/common';
 
 const MessageNotFoundException = new NotFoundException('Сообщение не найдено');
 
-const InvalidIdException = new BadRequestException('Невалидный ID');
-
 const InvalidChatGroupException = new BadRequestException(
   'Сообщение не может быть привязано и к группе, и к диалогу одновременно',
 );
@@ -16,10 +14,14 @@ const AuthorNotInDialogException = new BadRequestException(
   'Пользователь не состоит в данном диалоге',
 );
 
+const NotYourMessageException = new BadRequestException(
+  'Вы не можете изменять или удалять чужое сообщение',
+);
+
 export {
   AuthorNotInDialogException,
   MissingChatGroupException,
   InvalidChatGroupException,
   MessageNotFoundException,
-  InvalidIdException,
+  NotYourMessageException,
 };

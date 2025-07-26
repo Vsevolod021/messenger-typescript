@@ -3,9 +3,16 @@ import {
   InvalidChatGroupException,
   MissingChatGroupException,
   MessageNotFoundException,
+  NotYourMessageException,
 } from './constants/notFound.constants';
 
-import { CreateMessageDto, UpdateMessageDto } from './message.dto';
+import {
+  CreateMessageDto,
+  DeleteMessageDto,
+  UpdateMessageDto,
+} from './message.dto';
+
+import { InvalidIdException } from 'src/shared/constants/notFound.constants';
 import { Message, MessageDocument } from './message.schema';
 import { DialogService } from '../dialog/dialog.service';
 import { GroupService } from '../group/group.service';
@@ -35,7 +42,7 @@ export class MessageService {
     if (dialogId) {
       const { users } = await this.dialogService.getDialogById(dialogId);
 
-      if (!users.find((u) => String(u) !== author)) {
+      if (!users.find((u) => String(u) === author)) {
         throw AuthorNotInDialogException;
       }
     }
@@ -43,7 +50,7 @@ export class MessageService {
     if (groupId) {
       const { users } = await this.groupService.getGroupById(groupId);
 
-      if (!users.find((u) => String(u) !== author)) {
+      if (!users.find((u) => String(u) === author)) {
         throw AuthorNotInDialogException;
       }
     }
@@ -58,7 +65,7 @@ export class MessageService {
 
   async getMessageById(_id: string) {
     if (!isValidObjectId(_id)) {
-      throw MessageNotFoundException;
+      throw InvalidIdException;
     }
 
     const message = await this.messageModel.findById(_id).exec();
@@ -72,7 +79,7 @@ export class MessageService {
 
   async getMessagesByDialogId(dialogId: string) {
     if (!isValidObjectId(dialogId)) {
-      throw MessageNotFoundException;
+      throw InvalidIdException;
     }
 
     await this.dialogService.getDialogById(dialogId);
@@ -88,7 +95,7 @@ export class MessageService {
 
   async getMessagesByGroupId(groupId: string) {
     if (!isValidObjectId(groupId)) {
-      throw MessageNotFoundException;
+      throw InvalidIdException;
     }
 
     await this.groupService.getGroupById(groupId);
@@ -103,8 +110,20 @@ export class MessageService {
   }
 
   async updateMessage(_id: string, updateMessageDto: UpdateMessageDto) {
+    const { author } = updateMessageDto;
+
     if (!isValidObjectId(_id)) {
+      throw InvalidIdException;
+    }
+
+    const message = await this.messageModel.findById(_id);
+
+    if (!message) {
       throw MessageNotFoundException;
+    }
+
+    if (String(message.author) !== author) {
+      throw NotYourMessageException;
     }
 
     const updated = await this.messageModel.findByIdAndUpdate(
@@ -113,24 +132,26 @@ export class MessageService {
       { new: true },
     );
 
-    if (!updated) {
-      throw MessageNotFoundException;
-    }
-
     return updated;
   }
 
-  async deleteMessage(_id: string) {
-    if (!isValidObjectId(_id)) {
+  async deleteMessage(deleteMessageDto: DeleteMessageDto) {
+    const { id, author } = deleteMessageDto;
+
+    if (!isValidObjectId(id)) {
+      throw InvalidIdException;
+    }
+
+    const message = await this.messageModel.findById(id);
+
+    if (!message) {
       throw MessageNotFoundException;
     }
 
-    const deleted = await this.messageModel.findByIdAndDelete(_id);
-
-    if (!deleted) {
-      throw MessageNotFoundException;
+    if (String(message.author) !== author) {
+      throw NotYourMessageException;
     }
 
-    return deleted;
+    await this.messageModel.findByIdAndDelete(id);
   }
 }

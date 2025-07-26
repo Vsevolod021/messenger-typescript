@@ -7,4 +7,10 @@ export interface CreateMessageDto {
 
 export interface UpdateMessageDto {
   text: string;
+  author: string;
+}
+
+export interface DeleteMessageDto {
+  id: string;
+  author: string;
 }
