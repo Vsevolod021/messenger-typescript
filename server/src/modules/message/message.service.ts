@@ -19,6 +19,7 @@ import { GroupService } from '../group/group.service';
 import { Model, isValidObjectId } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Injectable } from '@nestjs/common';
+import { ChatGateway } from '../chat/chat.gateway';
 
 @Injectable()
 export class MessageService {
@@ -26,6 +27,7 @@ export class MessageService {
     @InjectModel(Message.name) private messageModel: Model<MessageDocument>,
     private dialogService: DialogService,
     private groupService: GroupService,
+    private chatGateway: ChatGateway,
   ) {}
 
   async createMessage(createMessageDto: CreateMessageDto) {
@@ -56,6 +58,7 @@ export class MessageService {
     }
 
     const newMessage = new this.messageModel(createMessageDto);
+
     return await newMessage.save();
   }
 

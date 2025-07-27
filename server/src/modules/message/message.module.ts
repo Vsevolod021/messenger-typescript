@@ -7,11 +7,13 @@ import { MessageService } from './message.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from '../auth/auth.module';
 import { Module } from '@nestjs/common';
+import { ChatModule } from '../chat/chat.module';
 
 @Module({
   imports: [
     UserModule,
     AuthModule,
+    ChatModule,
     GroupModule,
     DialogModule,
     MongooseModule.forFeature([{ name: Message.name, schema: MessageSchema }]),
